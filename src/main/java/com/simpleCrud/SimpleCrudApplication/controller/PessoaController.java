@@ -28,8 +28,13 @@ public class PessoaController {
 
     @PostMapping
     public ResponseEntity registerPessoa(@RequestBody Pessoa data) {
-        repository.save(data);
-        return ResponseEntity.ok().build();
+        boolean valid = isValid(data.getCpf());
+        if (valid) {
+            repository.save(data);
+            return ResponseEntity.ok().build();
+        } else {
+            throw new EntityNotFoundException();
+        }
     }
 
     @GetMapping("/{id}")
@@ -57,7 +62,10 @@ public class PessoaController {
         if (optionalPessoa.isPresent()) {
             Pessoa product = optionalPessoa.get();
             product.setName(data.getName());
-            product.setCpf(data.getCpf());
+            boolean valid = isValid(data.getCpf());
+            if (valid) {
+                product.setCpf(data.getCpf());
+            }
             product.setNascimento(data.getNascimento());
 
             return ResponseEntity.ok(product);
@@ -76,6 +84,53 @@ public class PessoaController {
         } else {
             throw new EntityNotFoundException();
         }
+    }
+
+
+    public boolean isValid(String value) {
+        return value == null || value.isEmpty() || isCpf(value);
+    }
+
+    private boolean isCpf(String cpf) {
+        cpf = cpf.replace(".", "");
+        cpf = cpf.replace("-", "");
+
+        try {
+            Long.parseLong(cpf);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+
+        int d1, d2;
+        int digito1, digito2, resto;
+        int digitoCPF;
+        String nDigResult;
+
+        d1 = d2 = 0;
+        digito1 = digito2 = resto = 0;
+
+        for (int nCount = 1; nCount < cpf.length() - 1; nCount++) {
+            digitoCPF = Integer.valueOf(cpf.substring(nCount - 1, nCount)).intValue();
+            d1 = d1 + (11 - nCount) * digitoCPF;
+            d2 = d2 + (12 - nCount) * digitoCPF;
+        }
+
+        resto = (d1 % 11);
+        if (resto < 2)
+            digito1 = 0;
+        else
+            digito1 = 11 - resto;
+
+        d2 += 2 * digito1;
+        resto = (d2 % 11);
+        if (resto < 2)
+            digito2 = 0;
+        else
+            digito2 = 11 - resto;
+        String nDigVerific = cpf.substring(cpf.length() - 2, cpf.length());
+        nDigResult = String.valueOf(digito1) + String.valueOf(digito2);
+
+        return nDigVerific.equals(nDigResult);
     }
 
 }
