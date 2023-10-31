@@ -1,7 +1,8 @@
-package com.simpleCrud.demo.entity;
+package com.simpleCrud.SimpleCrudApplication.entity;
 
 import jakarta.persistence.*;
 
+import javax.validation.constraints.NotEmpty;
 import java.sql.Date;
 
 @Entity(name = "contato")
@@ -11,15 +12,16 @@ public class Contato {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-
-    private String name;
-
+    @NotEmpty
+    private String nome;
+    @NotEmpty
     private String telefone;
-
+    @NotEmpty
     private Date email;
 
     @ManyToOne()
     @JoinColumn(name = "pessoa")
+    @NotEmpty
     private Pessoa pessoa;
 
 
@@ -39,12 +41,12 @@ public class Contato {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getNome() {
+        return nome;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public String getTelefone() {

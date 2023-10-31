@@ -1,8 +1,9 @@
-package com.simpleCrud.demo.entity;
+package com.simpleCrud.SimpleCrudApplication.entity;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.Cascade;
 
+import javax.validation.constraints.NotEmpty;
 import java.sql.Date;
 import java.util.List;
 
@@ -14,10 +15,11 @@ public class Pessoa {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @NotEmpty
     private String name;
-
+    @NotEmpty
     private String cpf;
-
+    @NotEmpty
     private Date nascimento;
 
     //Lista de Contatos
