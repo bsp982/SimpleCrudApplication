@@ -1,27 +1,36 @@
 package com.simpleCrud.SimpleCrudApplication.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.sql.Date;
 
-@Entity(name = "contato")
-@Table(name = "contato")
+@Entity()
 public class Contato {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
-    @NotEmpty
-    private String nome;
-    @NotEmpty
-    private String telefone;
-    @NotEmpty
-    private Date email;
+    private int id;
 
-    @ManyToOne()
+    @NotBlank
+    @Length(min = 5, max = 100)
+    @Column(length = 100, nullable = false)
+    private String nome;
+
+    @NotEmpty
+    @NotBlank
+    @Length(min = 5, max = 100)
+    @Column(length = 100, nullable = false)
+    private String telefone;
+
     @JoinColumn(name = "pessoa")
     @NotEmpty
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OrderBy("id ASC")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Pessoa pessoa;
 
 
@@ -33,11 +42,11 @@ public class Contato {
         this.pessoa = pessoa;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -57,11 +66,4 @@ public class Contato {
         this.telefone = telefone;
     }
 
-    public Date getEmail() {
-        return email;
-    }
-
-    public void setEmail(Date email) {
-        this.email = email;
-    }
 }

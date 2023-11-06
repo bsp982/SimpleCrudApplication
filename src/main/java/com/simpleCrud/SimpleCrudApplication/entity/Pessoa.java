@@ -1,38 +1,65 @@
 package com.simpleCrud.SimpleCrudApplication.entity;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.Cascade;
+import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.sql.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-@Entity(name = "pessoa")
-@Table(name = "pessoa")
+@Entity
 public class Pessoa {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotEmpty
-    private String name;
-    @NotEmpty
+    @NotBlank
+    @Length(min = 5, max = 200)
+    @Column(length = 200, nullable = false)
+    private String nome;
+
+    @NotBlank
+    @Length(min = 5, max = 200)
+    @Column(length = 200, nullable = false)
     private String cpf;
     @NotEmpty
     private Date nascimento;
 
     //Lista de Contatos
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "pessoa")
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    private List<Contato> contatos;
+    @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+    @NotEmpty
+    private Set<Contato> contatos = new HashSet<>();
 
-    public List<Contato> getContatos() {
+    public Set<Contato> getContatos() {
         return contatos;
     }
 
-    public void setContatos(List<Contato> contatos) {
-        this.contatos = contatos;
+    public void addContato(Contato contato) {
+        if (contato == null) {
+            throw new IllegalArgumentException("Contato não pode ser nulo.");
+        }
+        contato.setPessoa(this);
+        this.contatos.add(contato);
+    }
+
+    public void removeContato(Contato contato) {
+        if (contato == null) {
+            throw new IllegalArgumentException("Contato não pode ser nulo.");
+        }
+        contato.setPessoa(null);
+        this.contatos.remove(contato);
+    }
+
+    public void setContatos(Set<Contato> contatos) {
+        if (contatos == null) {
+            throw new IllegalArgumentException("Contato não pode ser nulo.");
+        }
+        this.contatos.clear();
+        this.contatos.addAll(contatos);
     }
 
     public Long getId() {
@@ -43,12 +70,12 @@ public class Pessoa {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getNome() {
+        return nome;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public String getCpf() {
