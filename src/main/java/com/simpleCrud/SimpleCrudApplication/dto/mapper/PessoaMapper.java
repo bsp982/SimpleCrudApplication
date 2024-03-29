@@ -18,7 +18,8 @@ public class PessoaMapper {
 
         Pessoa pessoa = new Pessoa();
         pessoa.setNome(pessoaRequestDTO.nome());
-
+        pessoa.setCpf(pessoaRequestDTO.cpf());
+        pessoa.setNascimento(pessoaRequestDTO.nascimento());
         Set<Contato> contatos = pessoaRequestDTO.contatos().stream()
                 .map(contatoDTO -> {
                     Contato lesson = new Contato();

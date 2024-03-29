@@ -7,7 +7,7 @@ Esse Repositorio contem um CRUD simples utilizando java Spring.
 1. Clone the repository:
 
 ```bash
-$ git clone https://github.com/bsp982/demo.git
+$ git clone https://github.com/bsp982/SimpleCrudApplication.git
 ```
 
 2. Install dependencies with Maven
